@@ -1,0 +1,55 @@
+name: Code Quality
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-version:
+        type: string
+        required: true
+      node-version:
+        type: string
+        required: true
+
+jobs:
+  codeQuality:
+    name: Code Quality
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ inputs.pnpm-version }}
+          run_install: false
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Get pnpm store directory
+        id: pnpm-store-path
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - name: Cache pnpm store
+        id: pnpm-cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-store-path.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-store-
+
+      - name: Install Dependencies
+        run: pnpm i --ignore-scripts
+
+      - name: Linters
+        id: linters
+        run: |
+          pnpm prettier:check
+          pnpm lint:check
+      - name: Unit Tests
+        id: units
+        run: pnpm test:unit
+
+      - name: Build Check
+        id: build-check
+        run: pnpm build:check

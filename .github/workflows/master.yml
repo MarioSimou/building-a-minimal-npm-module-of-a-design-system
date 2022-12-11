@@ -1,0 +1,48 @@
+name: Master Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  codeQuality:
+    uses: ./.github/workflows/code-quality.yml
+    with:
+      node-version: lts/hydrogen
+      pnpm-version: 7.x
+
+  release:
+    runs-on: ubuntu-22.04
+    needs: [codeQuality]
+    if: needs.codeQuality.result == 'success'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/hydrogen
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.x
+
+      - name: Get pnpm store path
+        id: pnpm-store-path
+        run: echo "PNPM_STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-store-path.outputs.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-store
+
+      - name: Install dependencies
+        run: pnpm i --ignore-scripts
+
+      - name: Build
+        run: pnpm build
+
+      - name: Release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: pnpm release

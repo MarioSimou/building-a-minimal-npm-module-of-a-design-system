@@ -1,0 +1,13 @@
+name: PR Pipeline
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  codeAnalysis:
+    uses: ./.github/workflows/code-quality.yml
+    with:
+      node-version: lts/hydrogen
+      pnpm-version: 7.x

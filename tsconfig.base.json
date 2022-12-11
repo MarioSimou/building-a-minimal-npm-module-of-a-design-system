@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": ["DOM", "ESNext"],
+    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
+}

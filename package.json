@@ -1,0 +1,82 @@
+{
+  "name": "@mariossimou.dev/building-a-minimal-npm-module-of-a-design-system",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "module": "./dist/esm/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start:dev": "storybook dev -p 6006 --no-open",
+    "start:prod": "npx serve -p 6006 storybook-static",
+    "build:storybook": "storybook build",
+    "build:esm": "tsc -P tsconfig.esm.json",
+    "build:cjs": "tsc -P tsconfig.cjs.json",
+    "build": "pnpm clean && pnpm build:esm && find 'dist/esm' | renamer --find '.js' --replace '.mjs' && pnpm build:cjs",
+    "build:check": "pnpm build:esm --noEmit && pnpm build:cjs --noEmit",
+    "prettier": "prettier --loglevel warn '.'",
+    "prettier:check": "pnpm prettier --check",
+    "prettier:format": "pnpm prettier --write",
+    "lint:check": "eslint './src/**/*.{ts,tsx}'",
+    "lint:format": "pnpm lint:check --fix",
+    "test:unit": "jest",
+    "test:unit:watch": "jest --watch",
+    "release": "semantic-release",
+    "clean": "rm -rf ./dist storybook-static 2>/dev/null"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@storybook/addon-essentials": "^7.0.0-beta.3",
+    "@storybook/addon-interactions": "^7.0.0-beta.3",
+    "@storybook/addon-links": "^7.0.0-beta.3",
+    "@storybook/blocks": "^7.0.0-beta.3",
+    "@storybook/react": "^7.0.0-beta.3",
+    "@storybook/react-vite": "^7.0.0-beta.3",
+    "@storybook/testing-library": "^0.0.13",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@types/jest": "^29.2.4",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "eslint": "^8.29.0",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
+    "prettier": "^2.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "renamer": "^4.0.0",
+    "semantic-release": "^19.0.5",
+    "storybook": "7.0.0-beta.3",
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.9.4"
+  }
+}
