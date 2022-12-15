@@ -1,6 +1,6 @@
 import React from 'react'
-import { useTheme } from '..'
-import type { ColorScheme } from '..'
+import { useTheme } from '../..'
+import type { ColorScheme } from '../..'
 
 export type ButtonProps = {
   colorScheme?: ColorScheme
